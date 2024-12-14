@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Card Prevention App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ID Card Prevention App</h1>
+        <form id="idForm">
+            <input type="text" id="unique_id" placeholder="Enter Your ID" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="output">
+            <img id="userImage" style="display: none;" />
+            <div id="responseMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('idForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const unique_id = document.getElementById('unique_id').value;
+
+            fetch('/check_id', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `unique_id=${unique_id}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById('responseMessage');
+                const userImage = document.getElementById('userImage');
+
+                responseDiv.innerHTML = '';
+                userImage.style.display = 'none';
+
+                if (data.status === 'exists') {
+                    responseDiv.innerHTML = `
+                        <p><strong>ID:</strong> ${data.unique_id}</p>
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Course:</strong> ${data.course}</p>
+                        <p><strong>Branch:</strong> ${data.branch}</p>
+                        <p><strong>Batch:</strong> ${data.batch}</p>
+                        <p><strong>college:</strong> ${data.college}</p>
+                        
+                    `;
+                    userImage.src = data.image_path;
+                    userImage.style.display = 'block';
+                } else {
+                    responseDiv.innerHTML = `<p>${data.message}</p>`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
