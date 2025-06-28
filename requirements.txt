@@ -8,4 +8,5 @@ pytesseract==0.3.13
 pyzbar==0.1.9
 requests==2.32.3
 gunicorn==21.2.0
+dlib==20.0
 
